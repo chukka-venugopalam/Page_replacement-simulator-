@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIFO Page Replacement</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>FIFO Page Replacement</h1>
+    
+    <div class="input-group">
+        <label for="referenceString">Reference String (comma or space separated):</label>
+        <input type="text" id="referenceString" placeholder="e.g., 7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1, 2, 0, 1, 7, 0, 1" value="7 0 1 2 0 3 0 4 2 3 0 3 2 1">
+    </div>
+
+    <div class="input-group">
+        <label for="frameCount">Number of Frames:</label>
+        <input type="number" id="frameCount" min="1" max="10" value="3">
+    </div>
+
+    <button onclick="simulateFIFO()">Simulate FIFO</button>
+
+    <div class="results" id="resultsSection">
+        <div class="stats">
+            <p><strong>Total Page Faults:</strong> <span id="faultCount">0</span></p>
+            <p><strong>Total Page Hits:</strong> <span id="hitCount">0</span></p>
+            <p><strong>Hit Ratio:</strong> <span id="hitRatio">0</span>%</p>
+        </div>
+
+        <div id="tableContainer"></div>
+
+        <div class="legend">
+            <div><span class="legend-box" style="background-color: var(--fault-color);"></span> Page Fault (Miss)</div>
+            <div><span class="legend-box" style="background-color: var(--hit-color);"></span> Page Hit</div>
+        </div>
+    </div>
+</div>
+    <script src="script.js"></script>
+</body>
+</html>
