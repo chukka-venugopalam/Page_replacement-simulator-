@@ -47,7 +47,11 @@ Reference String: 7 0 1 2 0 3 0 4 Frames: 3
 ---
 
 ##  Project Structure
-fifo-page-replacement/ │── index.html │── style.css │── script.js │── README.md
+page-replacement-simukator/ 
+│── index.html 
+│── style.css 
+│── script.js 
+│── README.md
 
 ---
 
@@ -56,6 +60,9 @@ fifo-page-replacement/ │── index.html │── style.css │── script
 **FIFO (First-In First-Out)**:
 - Oldest page in memory is replaced first
 - Uses a circular pointer to track replacement
+**LRU (Least Recently Used)**:
+-Replaces the page that was used least recently
+  Uses past access history to decide which page to remove
 
 ---
 
@@ -70,7 +77,6 @@ fifo-page-replacement/ │── index.html │── style.css │── script
 ##  Future Improvements
 
 - Add:
-  - LRU (Least Recently Used)
   - Optimal Page Replacement
 - Add step-by-step animation
 - Add comparison between algorithms
