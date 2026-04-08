@@ -1,13 +1,12 @@
-/* Peaceful, calm color palette */
 :root {
-    --bg-color: #f4f9f4; /* Very light mint/grey background */
+    --bg-color: #f4f9f4; 
     --container-bg: #ffffff;
-    --text-color: #4a4e4d; /* Soft dark grey for text */
-    --border-color: #cce3de; /* Soft sage border */
-    --btn-bg: #a8d5e2; /* Soft blue */
+    --text-color: #4a4e4d; 
+    --border-color: #cce3de; 
+    --btn-bg: #a8d5e2; 
     --btn-hover: #8ebcd0;
-    --fault-color: #ffdfd3; /* Soft peach/pink for faults */
-    --hit-color: #e2f0cb; /* Soft pastel green for hits */
+    --fault-color: #ffdfd3; 
+    --hit-color: #e2f0cb; 
 }
 
 body {
@@ -20,7 +19,7 @@ body {
 }
 
 .container {
-    max-width: 800px;
+    max-width: 900px; /* Made slightly wider for comparison */
     margin: 0 auto;
     background-color: var(--container-bg);
     padding: 30px;
@@ -31,8 +30,21 @@ body {
 
 h1 {
     text-align: center;
-    color: #6b8c85; /* Calm sage green text */
+    color: #6b8c85; 
     margin-bottom: 30px;
+}
+
+h2 {
+    color: #557a71;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 5px;
+    margin-top: 30px;
+}
+
+h3 {
+    margin-top: 0;
+    text-align: center;
+    color: #4a4e4d;
 }
 
 .input-group {
@@ -46,7 +58,7 @@ label {
     font-weight: bold;
 }
 
-input, select {
+input {
     padding: 10px;
     border: 1px solid var(--border-color);
     border-radius: 4px;
@@ -55,7 +67,7 @@ input, select {
     background-color: #fff;
 }
 
-input:focus, select:focus {
+input:focus {
     outline: none;
     border-color: var(--btn-bg);
 }
@@ -83,31 +95,34 @@ button:hover {
     display: none;
 }
 
-.stats {
-    display: flex;
-    justify-content: space-around;
+.summary-box {
     background-color: var(--bg-color);
-    padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 8px;
     border: 1px solid var(--border-color);
+    margin-bottom: 20px;
 }
 
-.stats p {
-    margin: 0;
-    font-size: 18px;
+.summary-table {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.summary-table th {
+    background-color: #d8e8e5;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 10px;
     text-align: center;
+    font-size: 14px; /* Slightly smaller text to fit all frames nicely */
 }
 
 th, td {
     border: 1px solid var(--border-color);
-    padding: 12px;
+    padding: 8px 5px;
 }
 
 th {
@@ -115,16 +130,11 @@ th {
     font-weight: bold;
 }
 
-.fault {
-    background-color: var(--fault-color);
-}
-
-.hit {
-    background-color: var(--hit-color);
-}
+.fault { background-color: var(--fault-color); }
+.hit { background-color: var(--hit-color); }
 
 .legend {
-    margin-top: 15px;
+    margin: 20px 0;
     display: flex;
     gap: 15px;
     justify-content: center;
@@ -140,10 +150,9 @@ th {
     border: 1px solid #ccc;
 }
 
-.fault-box {
-    background-color: var(--fault-color);
-}
+.fault-box { background-color: var(--fault-color); }
+.hit-box { background-color: var(--hit-color); }
 
-.hit-box {
-    background-color: var(--hit-color);
+.algo-section {
+    margin-bottom: 40px;
 }
