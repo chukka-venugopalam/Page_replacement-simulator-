@@ -1,10 +1,7 @@
-function simulate() {
-    // 1. Get input values
-    const algorithm = document.getElementById('algorithm').value;
+function compareAlgorithms() {
     const refInput = document.getElementById('referenceString').value;
     const frameCount = parseInt(document.getElementById('frameCount').value);
 
-    // Parse the reference string
     const pages = refInput.replace(/,/g, ' ').trim().split(/\s+/).map(Number);
     
     if (pages.length === 0 || isNaN(pages[0]) || isNaN(frameCount) || frameCount < 1) {
@@ -12,23 +9,40 @@ function simulate() {
         return;
     }
 
-    // Shared variables
+    // Run all three algorithms
+    const fifoResults = runAlgorithm('FIFO', pages, frameCount);
+    const lruResults = runAlgorithm('LRU', pages, frameCount);
+    const optResults = runAlgorithm('OPT', pages, frameCount);
+
+    // Update Summary Table
+    updateSummaryRow('fifo', fifoResults, pages.length);
+    updateSummaryRow('lru', lruResults, pages.length);
+    updateSummaryRow('opt', optResults, pages.length);
+
+    // Render detailed tables
+    document.getElementById('fifoTableContainer').innerHTML = buildTable(pages, frameCount, fifoResults.history);
+    document.getElementById('lruTableContainer').innerHTML = buildTable(pages, frameCount, lruResults.history);
+    document.getElementById('optTableContainer').innerHTML = buildTable(pages, frameCount, optResults.history);
+
+    // Show results
+    document.getElementById('resultsSection').style.display = 'block';
+}
+
+function runAlgorithm(algorithm, pages, frameCount) {
     let frames = new Array(frameCount).fill(-1); 
     let history = []; 
     let faults = 0;
     let hits = 0;
 
-    // Specific to algorithms
     let fifoPointer = 0; 
-    let lastUsed = new Array(frameCount).fill(-1); // For LRU
+    let lastUsed = new Array(frameCount).fill(-1); 
 
-    // 2. Run the Selected Algorithm
     for (let i = 0; i < pages.length; i++) {
         let currentPage = pages[i];
         let isHit = false;
         let hitIndex = -1;
 
-        // Check if page is already in a frame (Hit)
+        // Check for hit
         for (let j = 0; j < frameCount; j++) {
             if (frames[j] === currentPage) {
                 isHit = true;
@@ -39,12 +53,8 @@ function simulate() {
         }
 
         if (isHit) {
-            // If LRU, update the last used time for this hit
-            if (algorithm === 'LRU') {
-                lastUsed[hitIndex] = i; 
-            }
+            if (algorithm === 'LRU') lastUsed[hitIndex] = i; 
         } else {
-            // Page Fault logic
             faults++;
             let replacedIndex = -1;
 
@@ -52,8 +62,8 @@ function simulate() {
                 replacedIndex = fifoPointer;
                 fifoPointer = (fifoPointer + 1) % frameCount; 
             } 
-            else if (algorithm === 'LRU') {
-                // Check for empty frames first
+            else if (algorithm === 'LRU' || algorithm === 'OPT') {
+                // Find empty frame first
                 for (let j = 0; j < frameCount; j++) {
                     if (frames[j] === -1) {
                         replacedIndex = j;
@@ -61,54 +71,38 @@ function simulate() {
                     }
                 }
                 
-                // If no empty frame, find the Least Recently Used frame
+                // If full, apply specific logic
                 if (replacedIndex === -1) {
-                    let oldestTime = Infinity;
-                    for (let j = 0; j < frameCount; j++) {
-                        if (lastUsed[j] < oldestTime) {
-                            oldestTime = lastUsed[j];
-                            replacedIndex = j;
+                    if (algorithm === 'LRU') {
+                        let oldestTime = Infinity;
+                        for (let j = 0; j < frameCount; j++) {
+                            if (lastUsed[j] < oldestTime) {
+                                oldestTime = lastUsed[j];
+                                replacedIndex = j;
+                            }
                         }
-                    }
-                }
-                
-                // Update LRU tracking
-                lastUsed[replacedIndex] = i;
-            }
-            else if (algorithm === 'OPT') {
-                // Check for empty frames first
-                for (let j = 0; j < frameCount; j++) {
-                    if (frames[j] === -1) {
-                        replacedIndex = j;
-                        break;
-                    }
-                }
-
-                // If no empty frame, find the Optimal frame to replace
-                if (replacedIndex === -1) {
-                    let farthest = -1;
-                    for (let j = 0; j < frameCount; j++) {
-                        // Find the next occurrence of the page currently in frames[j]
-                        let nextUse = pages.indexOf(frames[j], i + 1);
-                        
-                        if (nextUse === -1) {
-                            // Page is never used again, replace it immediately
-                            replacedIndex = j;
-                            break; 
-                        } else if (nextUse > farthest) {
-                            // Track the page that is used farthest in the future
-                            farthest = nextUse;
-                            replacedIndex = j;
+                    } 
+                    else if (algorithm === 'OPT') {
+                        let farthest = -1;
+                        for (let j = 0; j < frameCount; j++) {
+                            let nextUse = pages.indexOf(frames[j], i + 1);
+                            if (nextUse === -1) {
+                                replacedIndex = j;
+                                break; 
+                            } else if (nextUse > farthest) {
+                                farthest = nextUse;
+                                replacedIndex = j;
+                            }
                         }
                     }
                 }
             }
 
-            // Place the new page in the calculated frame index
+            if (algorithm === 'LRU') lastUsed[replacedIndex] = i;
             frames[replacedIndex] = currentPage;
         }
 
-        // Save the state for visualization
+        // Save state snapshot
         history.push({
             page: currentPage,
             framesState: [...frames],
@@ -116,42 +110,41 @@ function simulate() {
         });
     }
 
-    // 3. Update the UI Stats
-    document.getElementById('faultCount').innerText = faults;
-    document.getElementById('hitCount').innerText = hits;
-    let ratio = ((hits / pages.length) * 100).toFixed(2);
-    document.getElementById('hitRatio').innerText = ratio;
+    return { faults, hits, history };
+}
 
-    // 4. Build the Visualization Table
-    let tableHTML = '<table>';
+function updateSummaryRow(prefix, results, totalPages) {
+    document.getElementById(`${prefix}Faults`).innerText = results.faults;
+    document.getElementById(`${prefix}Hits`).innerText = results.hits;
+    document.getElementById(`${prefix}Ratio`).innerText = ((results.hits / totalPages) * 100).toFixed(2) + '%';
+}
+
+function buildTable(pages, frameCount, history) {
+    let html = '<table>';
     
-    tableHTML += '<tr><th>Reference</th>';
+    html += '<tr><th>Ref</th>';
     for (let i = 0; i < pages.length; i++) {
-        tableHTML += `<th>${pages[i]}</th>`;
+        html += `<th>${pages[i]}</th>`;
     }
-    tableHTML += '</tr>';
+    html += '</tr>';
 
     for (let f = 0; f < frameCount; f++) {
-        tableHTML += `<tr><th>Frame ${f + 1}</th>`;
+        html += `<tr><th>F${f + 1}</th>`;
         for (let i = 0; i < history.length; i++) {
             let val = history[i].framesState[f];
-            let displayVal = (val === -1) ? '-' : val;
-            tableHTML += `<td>${displayVal}</td>`;
+            html += `<td>${val === -1 ? '-' : val}</td>`;
         }
-        tableHTML += '</tr>';
+        html += '</tr>';
     }
 
-    tableHTML += '<tr><th>Status</th>';
+    html += '<tr><th>Status</th>';
     for (let i = 0; i < history.length; i++) {
         let status = history[i].status;
         let cssClass = (status === 'Hit') ? 'hit' : 'fault';
         let symbol = (status === 'Hit') ? '✓' : '✗';
-        tableHTML += `<td class="${cssClass}">${symbol}</td>`;
+        html += `<td class="${cssClass}">${symbol}</td>`;
     }
-    tableHTML += '</tr>';
+    html += '</tr></table>';
 
-    tableHTML += '</table>';
-
-    document.getElementById('tableContainer').innerHTML = tableHTML;
-    document.getElementById('resultsSection').style.display = 'block';
+    return html;
 }
