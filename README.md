@@ -60,12 +60,14 @@ page-replacement-simukator/
 **FIFO (First-In First-Out)**:
 - Oldest page in memory is replaced first
 - Uses a circular pointer to track replacement
+  
 **LRU (Least Recently Used)**:
--Replaces the page that was used least recently
--Uses past access history to decide which page to remove
+- Replaces the page that was used least recently
+- Uses past access history to decide which page to remove
+  
 **Optimal Page Replacement (OPT)**:
--Page that will not be used for the longest time in the future is replaced first
--Uses future reference knowledge to decide replacement
+- Page that will not be used for the longest time in the future is replaced first
+- Uses future reference knowledge to decide replacement
 ---
 
 ##  Learning Outcome
@@ -79,7 +81,6 @@ page-replacement-simukator/
 ##  Future Improvements
 
 - Add step-by-step animation
-- Add comparison between algorithms
 
 ---
 
