@@ -20,7 +20,7 @@ function simulate() {
 
     // Specific to algorithms
     let fifoPointer = 0; 
-    let lastUsed = new Array(frameCount).fill(-1); // For LRU: tracks the index when a frame was last used
+    let lastUsed = new Array(frameCount).fill(-1); // For LRU
 
     // 2. Run the Selected Algorithm
     for (let i = 0; i < pages.length; i++) {
@@ -74,6 +74,34 @@ function simulate() {
                 
                 // Update LRU tracking
                 lastUsed[replacedIndex] = i;
+            }
+            else if (algorithm === 'OPT') {
+                // Check for empty frames first
+                for (let j = 0; j < frameCount; j++) {
+                    if (frames[j] === -1) {
+                        replacedIndex = j;
+                        break;
+                    }
+                }
+
+                // If no empty frame, find the Optimal frame to replace
+                if (replacedIndex === -1) {
+                    let farthest = -1;
+                    for (let j = 0; j < frameCount; j++) {
+                        // Find the next occurrence of the page currently in frames[j]
+                        let nextUse = pages.indexOf(frames[j], i + 1);
+                        
+                        if (nextUse === -1) {
+                            // Page is never used again, replace it immediately
+                            replacedIndex = j;
+                            break; 
+                        } else if (nextUse > farthest) {
+                            // Track the page that is used farthest in the future
+                            farthest = nextUse;
+                            replacedIndex = j;
+                        }
+                    }
+                }
             }
 
             // Place the new page in the calculated frame index
