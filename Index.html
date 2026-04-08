@@ -3,26 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Replacement Simulator</title>
+    <title>Page Replacement Comparison</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
-    <h1>Page Replacement Simulator</h1>
+    <h1>Algorithm Comparison: FIFO vs LRU vs Optimal</h1>
     
     <div class="input-group">
-        <label for="algorithm">Algorithm:</label>
-        <select id="algorithm">
-            <option value="FIFO">First-In, First-Out (FIFO)</option>
-            <option value="LRU">Least Recently Used (LRU)</option>
-            <option value="OPT">Optimal</option>
-        </select>
-    </div>
-
-    <div class="input-group">
         <label for="referenceString">Reference String (comma or space separated):</label>
-        <input type="text" id="referenceString" placeholder="e.g., 7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1" value="7 0 1 2 0 3 0 4 2 3 0 3 2 1">
+        <input type="text" id="referenceString" placeholder="e.g., 7 0 1 2 0 3 0 4 2 3 0 3 2 1" value="7 0 1 2 0 3 0 4 2 3 0 3 2 1">
     </div>
 
     <div class="input-group">
@@ -30,21 +21,60 @@
         <input type="number" id="frameCount" min="1" max="10" value="3">
     </div>
 
-    <button onclick="simulate()">Simulate</button>
+    <button onclick="compareAlgorithms()">Compare All</button>
 
     <div class="results" id="resultsSection">
-        <div class="stats">
-            <p><strong>Total Page Faults:</strong> <span id="faultCount">0</span></p>
-            <p><strong>Total Page Hits:</strong> <span id="hitCount">0</span></p>
-            <p><strong>Hit Ratio:</strong> <span id="hitRatio">0</span>%</p>
+        
+        <div class="summary-box">
+            <h3>Comparison Summary</h3>
+            <table class="summary-table">
+                <tr>
+                    <th>Algorithm</th>
+                    <th>Page Faults</th>
+                    <th>Page Hits</th>
+                    <th>Hit Ratio</th>
+                </tr>
+                <tr>
+                    <td><strong>FIFO</strong></td>
+                    <td id="fifoFaults">-</td>
+                    <td id="fifoHits">-</td>
+                    <td id="fifoRatio">-</td>
+                </tr>
+                <tr>
+                    <td><strong>LRU</strong></td>
+                    <td id="lruFaults">-</td>
+                    <td id="lruHits">-</td>
+                    <td id="lruRatio">-</td>
+                </tr>
+                <tr>
+                    <td><strong>Optimal</strong></td>
+                    <td id="optFaults">-</td>
+                    <td id="optHits">-</td>
+                    <td id="optRatio">-</td>
+                </tr>
+            </table>
         </div>
-
-        <div id="tableContainer"></div>
 
         <div class="legend">
             <div><span class="legend-box fault-box"></span> Page Fault (Miss)</div>
             <div><span class="legend-box hit-box"></span> Page Hit</div>
         </div>
+
+        <div class="algo-section">
+            <h2>1. First-In, First-Out (FIFO)</h2>
+            <div id="fifoTableContainer"></div>
+        </div>
+
+        <div class="algo-section">
+            <h2>2. Least Recently Used (LRU)</h2>
+            <div id="lruTableContainer"></div>
+        </div>
+
+        <div class="algo-section">
+            <h2>3. Optimal (OPT)</h2>
+            <div id="optTableContainer"></div>
+        </div>
+
     </div>
 </div>
 
