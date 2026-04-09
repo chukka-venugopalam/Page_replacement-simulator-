@@ -9,7 +9,7 @@ function compareAlgorithms() {
         return;
     }
 
-    // Run all three algorithms
+    // Run algorithms and capture results (including logs)
     const fifoResults = runAlgorithm('FIFO', pages, frameCount);
     const lruResults = runAlgorithm('LRU', pages, frameCount);
     const optResults = runAlgorithm('OPT', pages, frameCount);
@@ -24,6 +24,11 @@ function compareAlgorithms() {
     document.getElementById('lruTableContainer').innerHTML = buildTable(pages, frameCount, lruResults.history);
     document.getElementById('optTableContainer').innerHTML = buildTable(pages, frameCount, optResults.history);
 
+    // Render Step-by-Step Logs
+    document.getElementById('fifoStepLog').innerHTML = buildLogHtml(fifoResults.logs);
+    document.getElementById('lruStepLog').innerHTML = buildLogHtml(lruResults.logs);
+    document.getElementById('optStepLog').innerHTML = buildLogHtml(optResults.logs);
+
     // Show results
     document.getElementById('resultsSection').style.display = 'block';
 }
@@ -31,6 +36,7 @@ function compareAlgorithms() {
 function runAlgorithm(algorithm, pages, frameCount) {
     let frames = new Array(frameCount).fill(-1); 
     let history = []; 
+    let logs = []; // NEW: Array to track step-by-step text
     let faults = 0;
     let hits = 0;
 
@@ -41,6 +47,8 @@ function runAlgorithm(algorithm, pages, frameCount) {
         let currentPage = pages[i];
         let isHit = false;
         let hitIndex = -1;
+        
+        let stepLogStr = `<strong>Step ${i + 1}:</strong> Request Page <strong>${currentPage}</strong>. `;
 
         // Check for hit
         for (let j = 0; j < frameCount; j++) {
@@ -54,12 +62,15 @@ function runAlgorithm(algorithm, pages, frameCount) {
 
         if (isHit) {
             if (algorithm === 'LRU') lastUsed[hitIndex] = i; 
+            stepLogStr += `<span class="text-hit">HIT!</span> Page ${currentPage} is already in Frame ${hitIndex + 1}.`;
         } else {
             faults++;
             let replacedIndex = -1;
+            let reasonStr = "";
 
             if (algorithm === 'FIFO') {
                 replacedIndex = fifoPointer;
+                reasonStr = `Replaced via FIFO pointer at Frame ${replacedIndex + 1}.`;
                 fifoPointer = (fifoPointer + 1) % frameCount; 
             } 
             else if (algorithm === 'LRU' || algorithm === 'OPT') {
@@ -67,6 +78,7 @@ function runAlgorithm(algorithm, pages, frameCount) {
                 for (let j = 0; j < frameCount; j++) {
                     if (frames[j] === -1) {
                         replacedIndex = j;
+                        reasonStr = `Placed into empty Frame ${replacedIndex + 1}.`;
                         break;
                     }
                 }
@@ -81,6 +93,7 @@ function runAlgorithm(algorithm, pages, frameCount) {
                                 replacedIndex = j;
                             }
                         }
+                        reasonStr = `Page ${frames[replacedIndex]} was least recently used, so it was replaced.`;
                     } 
                     else if (algorithm === 'OPT') {
                         let farthest = -1;
@@ -88,10 +101,12 @@ function runAlgorithm(algorithm, pages, frameCount) {
                             let nextUse = pages.indexOf(frames[j], i + 1);
                             if (nextUse === -1) {
                                 replacedIndex = j;
+                                reasonStr = `Page ${frames[replacedIndex]} is never used again, so it was replaced.`;
                                 break; 
                             } else if (nextUse > farthest) {
                                 farthest = nextUse;
                                 replacedIndex = j;
+                                reasonStr = `Page ${frames[replacedIndex]} is not used until furthest in the future, so it was replaced.`;
                             }
                         }
                     }
@@ -99,7 +114,12 @@ function runAlgorithm(algorithm, pages, frameCount) {
             }
 
             if (algorithm === 'LRU') lastUsed[replacedIndex] = i;
+            
+            let oldPage = frames[replacedIndex];
             frames[replacedIndex] = currentPage;
+            
+            stepLogStr += `<span class="text-fault">FAULT!</span> `;
+            stepLogStr += (oldPage === -1) ? `Added to memory. ${reasonStr}` : `Evicted Page ${oldPage}. ${reasonStr}`;
         }
 
         // Save state snapshot
@@ -108,9 +128,11 @@ function runAlgorithm(algorithm, pages, frameCount) {
             framesState: [...frames],
             status: isHit ? 'Hit' : 'Fault'
         });
+        
+        logs.push(stepLogStr);
     }
 
-    return { faults, hits, history };
+    return { faults, hits, history, logs };
 }
 
 function updateSummaryRow(prefix, results, totalPages) {
@@ -146,5 +168,13 @@ function buildTable(pages, frameCount, history) {
     }
     html += '</tr></table>';
 
+    return html;
+}
+
+function buildLogHtml(logs) {
+    let html = '';
+    for(let i=0; i<logs.length; i++){
+        html += `<p>${logs[i]}</p>`;
+    }
     return html;
 }
