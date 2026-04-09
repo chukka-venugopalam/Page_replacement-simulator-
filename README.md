@@ -1,23 +1,35 @@
-# Page_replacement-simulator-
+# Page Replacement Algorithm Simulator
 
-A simple and interactive web-based simulator for the ** Page Replacement Algorithms** used in Operating Systems.
-
-This project helps visualize how pages are loaded into memory frames and how page faults and hits occur step-by-step.
+An interactive web-based simulator to visualize and compare page replacement algorithms used in Operating Systems.
 
 ---
 
 ##  Features
 
-- Input custom **reference string**
-- Set **number of frames**
-- Step-by-step **visual table representation**
-- Displays:
-  -  Page Hits
-  -  Page Faults
-  -  Hit Ratio
-- Color-coded output:
-  - Green → Hit
-  - Red → Fault
+- Compare multiple algorithms:
+  - FIFO (First-In First-Out)
+  - LRU (Least Recently Used)
+  - Optimal (OPT)
+
+-  Detailed Comparison Table:
+  - Page Faults
+  - Page Hits
+  - Hit Ratio
+
+- Step-by-Step Execution:
+  - Shows each page request
+  - Identifies HIT or FAULT
+  - Explains why a page was replaced
+
+-  Concept Section:
+  - Clear explanation of each algorithm
+  - Pros and cons
+  - Time complexity
+
+-  Visual Learning:
+  - Frame-by-frame table visualization
+  - Color-coded hits and faults
+  - Expandable step logs
 
 ---
 
@@ -25,74 +37,78 @@ This project helps visualize how pages are loaded into memory frames and how pag
 
 - HTML
 - CSS
-- JavaScript (Vanilla)
+- JavaScript (Vanilla JS)
 
 ---
 
-## How It Works
+##  How It Works
 
-1. Enter a reference string (comma or space separated)
-2. Enter number of frames
-3. Click **Simulate FIFO**
+1. Enter a reference string (e.g., `7 0 1 2 0 3 0`)
+2. Select number of frames
+3. Click **Compare All Algorithms**
 4. View:
-   - Frame allocation
-   - Hit/Fault sequence
-   - Performance metrics
+   - Summary comparison
+   - Frame simulation tables
+   - Step-by-step explanations
 
 ---
 
-##  Example Input
-Reference String: 7 0 1 2 0 3 0 4 Frames: 3
+##  Algorithms Explained
+
+### FIFO (First-In First-Out)
+- Replaces the oldest page in memory
+- Simple but can suffer from Belady’s Anomaly
+- Time Complexity: O(1) per operation
+
+---
+
+### LRU (Least Recently Used)
+- Replaces the page not used for the longest time
+- Better real-world performance than FIFO
+- Time Complexity: O(n) (can be optimized to O(1))
+
+---
+
+### Optimal (OPT)
+- Replaces the page used farthest in the future
+- Produces minimum page faults
+- Not implementable in real systems (requires future knowledge)
+- Time Complexity: O(n²)
 
 ---
 
 ##  Project Structure
-page-replacement-simukator/ 
-│── index.html 
-│── style.css 
-│── script.js 
-│── README.md
+├── index.html 
+├── style.css 
+├── script.js 
+└── README.md
 
 ---
 
-##  Algorithm Used
+##  Learning Outcomes
 
-**FIFO (First-In First-Out)**:
-- Oldest page in memory is replaced first
-- Uses a circular pointer to track replacement
-  
-**LRU (Least Recently Used)**:
-- Replaces the page that was used least recently
-- Uses past access history to decide which page to remove
-  
-**Optimal Page Replacement (OPT)**:
-- Page that will not be used for the longest time in the future is replaced first
-- Uses future reference knowledge to decide replacement
----
-
-##  Learning Outcome
-
-- Understanding of **Page Replacement Algorithms**
-- Visualization of **Memory Management**
-- Strengthens **Operating Systems concepts (GATE relevant)**
+- Understanding of memory management concepts
+- Difference between FIFO, LRU, and Optimal
+- Visualization of page faults and hits
+- Insight into algorithm efficiency
 
 ---
 
 ##  Future Improvements
 
-- Add step-by-step animation
+- Add Clock (Second Chance) Algorithm
+- Add graphical animations
+- Export results as PDF
+- Add dark mode toggle
+
+---
+
+## Contributing
+
+Feel free to fork this repo and improve it!
 
 ---
 
 ## Author
 
-**Chukka Venugopalam **  
-- Web Developer  
-- GATE Aspirant  
-- DSA Learner  
-- Python Enthusiast  
-
----
-
-## Support
-If you like this project, give it a ⭐ on GitHub!
+**Venugopal Chukka**
