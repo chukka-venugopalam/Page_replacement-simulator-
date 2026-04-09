@@ -10,6 +10,30 @@
 
 <div class="container">
     <h1>Algorithm Comparison: FIFO vs LRU vs Optimal</h1>
+
+    <div class="concept-section">
+        <h2>Concepts & Time Complexity</h2>
+        <div class="concept-cards">
+            <div class="card">
+                <h3>FIFO (First-In, First-Out)</h3>
+                <p><strong>Concept:</strong> Replaces the oldest page in memory. It treats page requests like a queue.</p>
+                <p><strong>Pros/Cons:</strong> Very simple to code, but suffers from <em>Belady's Anomaly</em> (more frames can sometimes cause more faults).</p>
+                <p><strong>Time Complexity:</strong> O(1) per step (just moving a pointer).</p>
+            </div>
+            <div class="card">
+                <h3>LRU (Least Recently Used)</h3>
+                <p><strong>Concept:</strong> Replaces the page that has not been used for the longest time in the past.</p>
+                <p><strong>Pros/Cons:</strong> Excellent real-world performance. Doesn't suffer from Belady's Anomaly. Harder to implement efficiently in hardware.</p>
+                <p><strong>Time Complexity:</strong> O(N) per step in our array, but can be O(1) with a Hash Map + Doubly Linked List.</p>
+            </div>
+            <div class="card">
+                <h3>OPT (Optimal)</h3>
+                <p><strong>Concept:</strong> Looks into the future and replaces the page that will not be used for the longest time.</p>
+                <p><strong>Pros/Cons:</strong> Guarantees the lowest possible page faults. However, it is impossible to implement in real life since OS cannot predict the future.</p>
+                <p><strong>Time Complexity:</strong> O(N) per step (requires looking ahead in the array).</p>
+            </div>
+        </div>
+    </div>
     
     <div class="input-group">
         <label for="referenceString">Reference String (comma or space separated):</label>
@@ -21,12 +45,12 @@
         <input type="number" id="frameCount" min="1" max="10" value="3">
     </div>
 
-    <button onclick="compareAlgorithms()">Compare All</button>
+    <button onclick="compareAlgorithms()">Compare All Algorithms</button>
 
     <div class="results" id="resultsSection">
         
         <div class="summary-box">
-            <h3>Comparison Summary</h3>
+            <h3 style="margin-top:0;">Comparison Summary</h3>
             <table class="summary-table">
                 <tr>
                     <th>Algorithm</th>
@@ -63,16 +87,28 @@
         <div class="algo-section">
             <h2>1. First-In, First-Out (FIFO)</h2>
             <div id="fifoTableContainer"></div>
+            <details class="step-details">
+                <summary>View Step-by-Step Explanation</summary>
+                <div id="fifoStepLog" class="step-log"></div>
+            </details>
         </div>
 
         <div class="algo-section">
             <h2>2. Least Recently Used (LRU)</h2>
             <div id="lruTableContainer"></div>
+            <details class="step-details">
+                <summary>View Step-by-Step Explanation</summary>
+                <div id="lruStepLog" class="step-log"></div>
+            </details>
         </div>
 
         <div class="algo-section">
             <h2>3. Optimal (OPT)</h2>
             <div id="optTableContainer"></div>
+            <details class="step-details">
+                <summary>View Step-by-Step Explanation</summary>
+                <div id="optStepLog" class="step-log"></div>
+            </details>
         </div>
 
     </div>
