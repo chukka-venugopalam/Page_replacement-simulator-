@@ -3,64 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Replacement Comparison</title>
+    <title>Page Replacement & Belady's Anomaly Simulator</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
 <div class="container">
-    <h1>Algorithm Comparison: FIFO vs LRU vs Optimal</h1>
+    <h1>Page Replacement Simulator & Analysis</h1>
 
     <div class="concept-section">
         <h2>Concepts & Time Complexity</h2>
         <div class="concept-cards">
             <div class="card">
                 <h3>FIFO (First-In, First-Out)</h3>
-                <p><strong>Concept:</strong> Replaces the oldest page in memory. It treats page requests like a queue.</p>
-                <p><strong>Pros/Cons:</strong> Very simple to code, but suffers from <em>Belady's Anomaly</em> (more frames can sometimes cause more faults).</p>
-                <p><strong>Time Complexity:</strong> O(1) per step (just moving a pointer).</p>
+                <p><strong>Concept:</strong> Replaces the oldest page in memory.</p>
+                <p><strong>GATE Note:</strong> Suffers from <em>Belady's Anomaly</em> (increasing frames can increase page faults). Check the line graph below to see it!</p>
+                <p><strong>Time Complexity:</strong> O(1) per step.</p>
             </div>
             <div class="card">
                 <h3>LRU (Least Recently Used)</h3>
-                <p><strong>Concept:</strong> Replaces the page that has not been used for the longest time in the past.</p>
-                <p><strong>Pros/Cons:</strong> Excellent real-world performance. Doesn't suffer from Belady's Anomaly. Harder to implement efficiently in hardware.</p>
-                <p><strong>Time Complexity:</strong> O(N) per step in our array, but can be O(1) with a Hash Map + Doubly Linked List.</p>
+                <p><strong>Concept:</strong> Replaces the page not used for the longest time.</p>
+                <p><strong>GATE Note:</strong> Stack algorithm; guaranteed to never suffer from Belady's Anomaly.</p>
+                <p><strong>Time Complexity:</strong> O(N) per step (array approach).</p>
             </div>
             <div class="card">
                 <h3>OPT (Optimal)</h3>
-                <p><strong>Concept:</strong> Looks into the future and replaces the page that will not be used for the longest time.</p>
-                <p><strong>Pros/Cons:</strong> Guarantees the lowest possible page faults. However, it is impossible to implement in real life since OS cannot predict the future.</p>
-                <p><strong>Time Complexity:</strong> O(N) per step (requires looking ahead in the array).</p>
+                <p><strong>Concept:</strong> Replaces the page that will not be used for the longest time in the future.</p>
+                <p><strong>GATE Note:</strong> Yields the theoretical minimum faults. Impossible to implement practically.</p>
+                <p><strong>Time Complexity:</strong> O(N) per step.</p>
             </div>
         </div>
     </div>
     
-    <div class="input-group">
-        <label for="referenceString">Reference String (comma or space separated):</label>
-        <input type="text" id="referenceString" placeholder="e.g., 7 0 1 2 0 3 0 4 2 3 0 3 2 1" value="7 0 1 2 0 3 0 4 2 3 0 3 2 1">
-    </div>
+    <div class="input-section">
+        <h2>Simulation Settings</h2>
+        
+        <div class="input-group">
+            <label for="simMode">Algorithm Selection Mode:</label>
+            <select id="simMode" onchange="toggleModeInputs()">
+                <option value="all">Compare All (FIFO, LRU, OPT)</option>
+                <option value="two">Compare 2 Algorithms</option>
+                <option value="single">Run Single Algorithm</option>
+            </select>
+        </div>
 
-    <div class="input-group">
-        <label for="frameCount">Number of Frames:</label>
-        <input type="number" id="frameCount" min="1" max="10" value="3">
-    </div>
+        <div class="mode-selectors" id="modeSelectors" style="display: none;">
+            <div class="input-group">
+                <label for="algo1">Algorithm 1:</label>
+                <select id="algo1">
+                    <option value="FIFO">FIFO</option>
+                    <option value="LRU">LRU</option>
+                    <option value="OPT">Optimal</option>
+                </select>
+            </div>
+            <div class="input-group" id="algo2Container">
+                <label for="algo2">Algorithm 2:</label>
+                <select id="algo2">
+                    <option value="LRU">LRU</option>
+                    <option value="FIFO">FIFO</option>
+                    <option value="OPT">Optimal</option>
+                </select>
+            </div>
+        </div>
 
-    <button onclick="compareAlgorithms()">Compare All Algorithms</button>
+        <div class="input-group">
+            <label for="referenceString">Reference String (comma or space separated):</label>
+            <input type="text" id="referenceString" placeholder="e.g., 1 2 3 4 1 2 5 1 2 3 4 5" value="1 2 3 4 1 2 5 1 2 3 4 5">
+        </div>
+
+        <div class="grid-inputs">
+            <div class="input-group">
+                <label for="frameCount">Target Frames (For Tables):</label>
+                <input type="number" id="frameCount" min="1" max="10" value="3">
+            </div>
+            <div class="input-group">
+                <label for="maxFramesGraph">Max Frames for Graph (Belady's Demo):</label>
+                <input type="number" id="maxFramesGraph" min="1" max="20" value="7">
+            </div>
+        </div>
+
+        <button onclick="runSimulation()">Run Simulation & Generate Graphs</button>
+    </div>
 
     <div class="results" id="resultsSection">
         
+        <div class="graph-section">
+            <h2>Data Visualization</h2>
+            
+            <div class="chart-wrapper">
+                <h3>Belady's Anomaly Analysis (Faults vs. Frames)</h3>
+                <p style="font-size: 13px; text-align:center; margin-top:-10px;">Look for a bump in the FIFO line as frames increase! This proves Belady's Anomaly.</p>
+                <canvas id="lineChart"></canvas>
+            </div>
+
+            <div class="chart-wrapper">
+                <h3>Total Page Faults Comparison (At <span id="barChartFrameCount">3</span> Frames)</h3>
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+
         <div class="summary-box">
-            <h3 style="margin-top:0;">Comparison Summary</h3>
-            <table class="summary-table">
+            <h3 style="margin-top:0;">Summary (At <span id="summaryFrameCount">3</span> Frames)</h3>
+            <table class="summary-table" id="summaryTable">
                 <tr>
                     <th>Algorithm</th>
                     <th>Page Faults</th>
                     <th>Page Hits</th>
                     <th>Hit Ratio</th>
                 </tr>
-                <tr>
-                    <td><strong>FIFO</strong></td>
-                    <td id="fifoFaults">-</td>
+                </table>
+        </div>
+
+        <div class="legend">
+            <div><span class="legend-box fault-box"></span> Page Fault (Miss)</div>
+            <div><span class="legend-box hit-box"></span> Page Hit</div>
+        </div>
+
+        <div id="detailedTablesContainer"></div>
+
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
                     <td id="fifoHits">-</td>
                     <td id="fifoRatio">-</td>
                 </tr>
