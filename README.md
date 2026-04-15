@@ -1,81 +1,40 @@
-# Page Replacement Algorithm Simulator
+# Page Replacement Algorithm Simulator & Analysis
 
-An interactive web-based simulator to visualize and compare page replacement algorithms used in Operating Systems.
+A web-based educational tool designed to simulate and compare Operating System Page Replacement algorithms: **FIFO**, **LRU**, and **Optimal (OPT)**. 
 
----
+This project was built to help visualize memory management concepts and demonstrate **Belady's Anomaly** using dynamic graphs and step-by-step execution logs, making it highly useful for computer science students and GATE exam preparation.
 
-##  Features
+## Features
 
-- Compare multiple algorithms:
-  - FIFO (First-In First-Out)
-  - LRU (Least Recently Used)
-  - Optimal (OPT)
+* **Multi-Algorithm Support:** Run First-In-First-Out (FIFO), Least Recently Used (LRU), and Optimal (OPT) algorithms.
+* **Comparison Modes:** Choose to run a single algorithm, compare two side-by-side, or run all three simultaneously.
+* **Belady's Anomaly Visualization:** Automatically generates a line graph plotting Page Faults vs. Frame Count to visually prove Belady's Anomaly in the FIFO algorithm.
+* **Interactive Visualizations:**
+    * Summary tables for quick page fault, hit, and hit-ratio comparisons.
+    * Detailed execution grids showing the state of memory frames at every step.
+    * Bar charts for direct performance comparison.
+* **Step-by-Step Logs:** Expandable drop-downs that explain exactly *why* a page was placed or evicted in plain English.
 
--  Detailed Comparison Table:
-  - Page Faults
-  - Page Hits
-  - Hit Ratio
+##  Technologies Used
 
-- Step-by-Step Execution:
-  - Shows each page request
-  - Identifies HIT or FAULT
-  - Explains why a page was replaced
+* **HTML5:** Structure and UI layout.
+* **CSS3:** Styling, utilizing a calm, peaceful pastel color palette and CSS Grid/Flexbox.
+* **Vanilla JavaScript:** Core algorithmic logic and DOM manipulation.
+* **Chart.js:** Used via CDN for rendering the responsive line and bar charts.
 
--  Concept Section:
-  - Clear explanation of each algorithm
-  - Pros and cons
-  - Time complexity
+##  How to Run
 
--  Visual Learning:
-  - Frame-by-frame table visualization
-  - Color-coded hits and faults
-  - Expandable step logs
+1. Clone or download this repository to your local machine.
+2. Ensure `index.html`, `style.css`, and `script.js` are in the same folder.
+3. Double-click `index.html` to open it in any modern web browser (Chrome, Firefox, Edge, Safari).
+4. *No server, node modules, or installations are required!*
 
----
+##  Educational Concepts Covered
 
-##  Tech Stack
-
-- HTML
-- CSS
-- JavaScript (Vanilla JS)
-
----
-
-##  How It Works
-
-1. Enter a reference string (e.g., `7 0 1 2 0 3 0`)
-2. Select number of frames
-3. Click **Compare All Algorithms**
-4. View:
-   - Summary comparison
-   - Frame simulation tables
-   - Step-by-step explanations
-
----
-
-##  Algorithms Explained
-
-### FIFO (First-In First-Out)
-- Replaces the oldest page in memory
-- Simple but can suffer from Belady’s Anomaly
-- Time Complexity: O(1) per operation
-
----
-
-### LRU (Least Recently Used)
-- Replaces the page not used for the longest time
-- Better real-world performance than FIFO
-- Time Complexity: O(n) (can be optimized to O(1))
-
----
-
-### Optimal (OPT)
-- Replaces the page used farthest in the future
-- Produces minimum page faults
-- Not implementable in real systems (requires future knowledge)
-- Time Complexity: O(n²)
-
----
+* **FIFO:** Replaces the oldest page. Easy to implement but suffers from Belady's Anomaly.
+* **LRU:** Replaces the page not used for the longest time. A stack algorithm that performs well and avoids Belady's Anomaly.
+* **OPT:** Replaces the page that won't be used for the longest time in the future. Theoretical minimum faults, used as a benchmark.
+* 
 
 ##  Project Structure
 ├── index.html 
@@ -85,19 +44,10 @@ An interactive web-based simulator to visualize and compare page replacement alg
 
 ---
 
-##  Learning Outcomes
-
-- Understanding of memory management concepts
-- Difference between FIFO, LRU, and Optimal
-- Visualization of page faults and hits
-- Insight into algorithm efficiency
-
----
 
 ##  Future Improvements
 
 - Add Clock (Second Chance) Algorithm
-- Add graphical animations
 - Export results as PDF
 - Add dark mode toggle
 
