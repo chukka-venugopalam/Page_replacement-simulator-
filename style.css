@@ -5,7 +5,7 @@
     --border-color: #cce3de; 
     --btn-bg: #a8d5e2; 
     --btn-hover: #8ebcd0;
-    --fault-color: #ffdfd3; 
+    --fault-color: #ff4d4d; /* NEW: Strong Red for clarity */
     --hit-color: #e2f0cb; 
 }
 
@@ -133,12 +133,21 @@ button {
 
 button:hover { background-color: var(--btn-hover); }
 
+/* NEW: Preset Button Styling */
+.preset-btn {
+    background-color: #ffd166;
+    width: auto;
+    margin: 0;
+    padding: 8px 15px;
+    font-size: 14px;
+}
+.preset-btn:hover { background-color: #ffc233; }
+
 .results {
     margin-top: 30px;
     display: none;
 }
 
-/* Chart Styles */
 .graph-section {
     display: flex;
     flex-direction: column;
@@ -169,6 +178,19 @@ button:hover { background-color: var(--btn-hover); }
     margin-bottom: 20px;
 }
 
+/* NEW: Best Algorithm Conclusion Box */
+.best-algo-box {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    border: 1px solid #c3e6cb;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -187,7 +209,12 @@ th {
     font-weight: bold;
 }
 
-.fault { background-color: var(--fault-color); }
+/* UPDATED: Strong Red for Faults */
+.fault { 
+    background-color: var(--fault-color); 
+    color: white;
+    font-weight: bold;
+}
 .hit { background-color: var(--hit-color); }
 
 .legend {
