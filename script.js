@@ -1,8 +1,14 @@
-// Global variables to store Chart instances so we can destroy them on re-runs
 let barChartInstance = null;
 let lineChartInstance = null;
 
-// Toggles the dropdowns based on mode selection
+// NEW: Load GATE Preset
+function loadPreset() {
+    document.getElementById('referenceString').value = "7 0 1 2 0 3 0 4 2 3 0 3 2";
+    document.getElementById('frameCount').value = 3;
+    document.getElementById('simMode').value = "all";
+    toggleModeInputs();
+}
+
 function toggleModeInputs() {
     const mode = document.getElementById('simMode').value;
     const selectorsDiv = document.getElementById('modeSelectors');
@@ -32,7 +38,6 @@ function runSimulation() {
         return;
     }
 
-    // Determine which algorithms to run
     let algosToRun = [];
     if (mode === 'all') {
         algosToRun = ['FIFO', 'LRU', 'OPT'];
@@ -41,39 +46,47 @@ function runSimulation() {
     } else if (mode === 'two') {
         algosToRun.push(document.getElementById('algo1').value);
         algosToRun.push(document.getElementById('algo2').value);
-        // Ensure uniqueness if user selected the same one twice
         algosToRun = [...new Set(algosToRun)]; 
     }
 
-    // Update dynamic text
     document.getElementById('summaryFrameCount').innerText = frameCount;
     document.getElementById('barChartFrameCount').innerText = frameCount;
 
-    // 1. Generate Summary Table & Detailed Tables
-    let summaryTableHTML = `<tr><th>Algorithm</th><th>Page Faults</th><th>Page Hits</th><th>Hit Ratio</th></tr>`;
+    let summaryTableHTML = `<tr><th>Algorithm</th><th>Page Faults</th><th>Page Hits</th><th>Hit Rate</th><th>Fault Rate</th></tr>`;
     let detailedContainerHTML = '';
     
     let barChartLabels = [];
     let barChartData = [];
 
+    // NEW: Variables to track the best algorithm
+    let bestAlgos = [];
+    let minFaults = Infinity;
+
     algosToRun.forEach(algo => {
         const results = runAlgorithm(algo, pages, frameCount);
-        const ratio = ((results.hits / pages.length) * 100).toFixed(2);
+        const hitRate = ((results.hits / pages.length) * 100).toFixed(2);
+        const faultRate = ((results.faults / pages.length) * 100).toFixed(2);
         
-        // Add to summary
+        // Track Best Algorithm
+        if (results.faults < minFaults) {
+            minFaults = results.faults;
+            bestAlgos = [algo];
+        } else if (results.faults === minFaults) {
+            bestAlgos.push(algo);
+        }
+
         summaryTableHTML += `
             <tr>
                 <td><strong>${algo}</strong></td>
                 <td>${results.faults}</td>
                 <td>${results.hits}</td>
-                <td>${ratio}%</td>
+                <td>${hitRate}%</td>
+                <td>${faultRate}%</td>
             </tr>`;
 
-        // Add to bar chart data
         barChartLabels.push(algo);
         barChartData.push(results.faults);
 
-        // Add to detailed views
         detailedContainerHTML += `
             <div class="algo-section">
                 <h2>${algo} Simulation</h2>
@@ -89,27 +102,30 @@ function runSimulation() {
     document.getElementById('summaryTable').innerHTML = summaryTableHTML;
     document.getElementById('detailedTablesContainer').innerHTML = detailedContainerHTML;
 
-    // 2. Generate Graphs
+    // Display Best Algorithm Conclusion
+    const bestAlgoDiv = document.getElementById('bestAlgoConclusion');
+    if (algosToRun.length > 1) {
+        bestAlgoDiv.innerHTML = `🏆 Best Algorithm: ${bestAlgos.join(' & ')} (Page Faults = ${minFaults})`;
+        bestAlgoDiv.style.display = 'block';
+    } else {
+        bestAlgoDiv.style.display = 'none'; // Hide if only running one algorithm
+    }
+
     generateBarChart(barChartLabels, barChartData);
     generateLineChart(pages, maxFramesGraph);
 
-    // Show results
     document.getElementById('resultsSection').style.display = 'block';
 }
 
 function generateBarChart(labels, data) {
     const ctx = document.getElementById('barChart').getContext('2d');
-    
-    // Destroy previous instance if it exists
     if (barChartInstance) barChartInstance.destroy();
 
-    // Map colors to algorithms
     const colorMap = {
-        'FIFO': '#ffb3ba', // Pastel Red
-        'LRU': '#bae1ff',  // Pastel Blue
-        'OPT': '#baffc9'   // Pastel Green
+        'FIFO': '#ffb3ba',
+        'LRU': '#bae1ff',
+        'OPT': '#baffc9'
     };
-
     const backgroundColors = labels.map(lbl => colorMap[lbl] || '#e2f0cb');
 
     barChartInstance = new Chart(ctx, {
@@ -136,7 +152,6 @@ function generateBarChart(labels, data) {
 
 function generateLineChart(pages, maxFrames) {
     const ctx = document.getElementById('lineChart').getContext('2d');
-    
     if (lineChartInstance) lineChartInstance.destroy();
 
     let frameLabels = [];
@@ -144,7 +159,6 @@ function generateLineChart(pages, maxFrames) {
     let lruFaults = [];
     let optFaults = [];
 
-    // Run simulations for Frames 1 through maxFrames to track Belady's Anomaly
     for (let f = 1; f <= maxFrames; f++) {
         frameLabels.push(`${f} Frames`);
         fifoFaults.push(runAlgorithm('FIFO', pages, f).faults);
@@ -160,8 +174,8 @@ function generateLineChart(pages, maxFrames) {
                 {
                     label: 'FIFO (Look for bumps!)',
                     data: fifoFaults,
-                    borderColor: '#ff6961', // Stronger red for visibility
-                    backgroundColor: 'rgba(255, 105, 97, 0.2)',
+                    borderColor: '#ff4d4d', 
+                    backgroundColor: 'rgba(255, 77, 77, 0.2)',
                     borderWidth: 3,
                     tension: 0.1,
                     fill: false
@@ -188,13 +202,8 @@ function generateLineChart(pages, maxFrames) {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                y: { 
-                    beginAtZero: true, 
-                    title: { display: true, text: 'Page Faults' }
-                },
-                x: {
-                    title: { display: true, text: 'Number of Frames Available' }
-                }
+                y: { beginAtZero: true, title: { display: true, text: 'Page Faults' } },
+                x: { title: { display: true, text: 'Number of Frames Available' } }
             },
             plugins: {
                 tooltip: {
@@ -215,7 +224,6 @@ function generateLineChart(pages, maxFrames) {
     });
 }
 
-// Core Algorithm Logic (Unchanged but modularized)
 function runAlgorithm(algorithm, pages, frameCount) {
     let frames = new Array(frameCount).fill(-1); 
     let history = []; 
@@ -344,3 +352,4 @@ function buildLogHtml(logs) {
     for(let i=0; i<logs.length; i++) html += `<p>${logs[i]}</p>`;
     return html;
                     }
+                            
