@@ -18,14 +18,14 @@
             <div class="card">
                 <h3>FIFO (First-In, First-Out)</h3>
                 <p><strong>Concept:</strong> Replaces the oldest page in memory.</p>
-                <p><strong>GATE Note:</strong> Suffers from <em>Belady's Anomaly</em> (increasing frames can increase page faults). Check the line graph below to see it!</p>
+                <p><strong>GATE Note:</strong> Suffers from <em>Belady's Anomaly</em>. Check the line graph below to see it!</p>
                 <p><strong>Time Complexity:</strong> O(1) per step.</p>
             </div>
             <div class="card">
                 <h3>LRU (Least Recently Used)</h3>
                 <p><strong>Concept:</strong> Replaces the page not used for the longest time.</p>
                 <p><strong>GATE Note:</strong> Stack algorithm; guaranteed to never suffer from Belady's Anomaly.</p>
-                <p><strong>Time Complexity:</strong> O(N) per step (array approach).</p>
+                <p><strong>Time Complexity:</strong> O(N) per step.</p>
             </div>
             <div class="card">
                 <h3>OPT (Optimal)</h3>
@@ -37,7 +37,10 @@
     </div>
     
     <div class="input-section">
-        <h2>Simulation Settings</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="margin-top: 0; border: none;">Simulation Settings</h2>
+            <button class="preset-btn" onclick="loadPreset()">Try Example (GATE)</button>
+        </div>
         
         <div class="input-group">
             <label for="simMode">Algorithm Selection Mode:</label>
@@ -110,9 +113,12 @@
                     <th>Algorithm</th>
                     <th>Page Faults</th>
                     <th>Page Hits</th>
-                    <th>Hit Ratio</th>
+                    <th>Hit Rate</th>
+                    <th>Fault Rate</th>
                 </tr>
                 </table>
+            
+            <div id="bestAlgoConclusion" class="best-algo-box" style="display: none;"></div>
         </div>
 
         <div class="legend">
