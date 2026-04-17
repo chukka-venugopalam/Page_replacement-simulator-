@@ -36,6 +36,9 @@ This project was built to help visualize memory management concepts and demonstr
 * **OPT:** Replaces the page that won't be used for the longest time in the future. Theoretical minimum faults, used as a benchmark.
 * 
 
+## Live Demo
+https://chukka-venugopalam.github.io/Page_replacement-simulator-/
+
 ##  Project Structure
 ├── index.html 
 ├── style.css 
